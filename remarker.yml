@@ -3,10 +3,10 @@ port: 30000
 title: Deno STD 安定化の話
 description: Deno STD を安定化した動機、プロセス、結果の話
 ogImage: "https://kt3k.github.io/talk_stabilize_std/assets/og-image.png"
-ogImageWidth: 800 
-ogImageHeight: 418 
+ogImageWidth: 1800
+ogImageHeight: 940
 twitter: kt3k
-favicon: ./assets/logo.svg
+favicon: ./assets/hi.png
 remarkConfig:
   slideNumberFormat: 'Deno STD 安定化の話 - %current% / %total%'
 css: |

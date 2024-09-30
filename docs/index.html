@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Deno STD 安定化の話</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    
+    <meta property="og:title" content="Deno STD 安定化の話"/>
+    
+    <meta property="og:image" content="https://kt3k.github.io/talk_stabilize_std/assets/og-image.png"/>
+    
+    <meta property="og:image:width" content="800"/>
+    
+    
+    <meta property="og:image:height" content="418"/>
+    
+    
+    
+    <meta property="og:description" content="Deno STD を安定化した動機、プロセス、結果の話" />
+    
+    
+    <meta name="twitter:creator" content="@kt3k"/>
+    
+    
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:image" content="https://kt3k.github.io/talk_stabilize_std/assets/og-image.png" />
+    
+    
+    <link rel="icon" href="./assets/logo.svg" type="image/svg+xml" />
+    
+    
+    <style type="text/css">
+      body {
+  font-family: 'Avenir Next', 'Hiragino Kaku Gothic ProN', 'Meiryo', 'メイリオ', sans-serif;
+  font-weight: bold;
+}
+h1, h2, h3 {
+  font-weight: bold;
+}
+.remark-code,
+.remark-inline-code {
+  font-family: 'Menlo', 'Monaco', 'Courier new', monospace;
+}
+
+code.remark-code {
+  display: block;
+  padding: 0.7em;
+  border-radius: 5px;
+  background-color: #272822;
+  color: #f3f3f3;
+  font-size: 23px;
+}
+
+.remark-slide-content {
+  color: #24292e;
+  font-size: 32px;
+  padding: 15px 60px;
+}
+
+.remark-slide-content.inverse {
+  color: #f3f3f3;
+  background-color: #272822;
+}
+
+.remark-slide-number a {
+  color: #24292e;
+  text-decoration: none;
+}
+
+.inverse .remark-slide-number a {
+  color: #f3f3f3;
+}
+
+.text-center {
+  text-align: center;
+}
+
+      @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+    </style>
+  </head>
+  <body>
+    <textarea id="source" style="display: none">class: middle, center
+
+# Deno Standard Library<br />安定化の話
+
+Yoshiya Hinosawa @kt3k
+
+---
+## 目次
+
+- なぜ安定化したのか
+- どうやって安定化したか
+- 安定化でどうなったのか
+
+---
+
+## Yoshiya Hinosawa
+
+<img src="./assets/hinosawa.jpg" width="180" />
+
+- x.com / github - @kt3k
+- Deno の中の人。最近は Deno Standard Library と Deno 本体の Node 互換周り担当
+- 元々は普通の Web エンジニアをしていました (- 2019)
+
+---
+
+## 安定化以前の Deno STD
+
+- Deno CLI (本体) と同時にリリース
+- Deno CLI の patch or minor バージョンが上がるたびに STD マイナーバージョンが1上がる
+- 例
+  - Deno CLI 1.42.3 -> 1.43.0
+  - STD 0.223.0 -> 0.224.0
+
+---
+
+## 安定化以前の Deno STD
+
+- STD 0.223.0 -> 0.224.0 の意味
+- SemVer 仕様 4項
+
+> Major version zero (0.y.z) is for initial development. Anything MAY change at any time. The public API SHOULD NOT be considered stable.
+
+0.x 系バージョンではAPI について何も保証されない
+
+---
+
+## 安定化以前の Deno STD
+
+エンタープライズユーザーにインタビューを繰り返していく中で、STD が 0.x.y バージョンであることが、大規模に Deno で開発する事のブロッカーになっているという意見が多くあることが分かってきた
+
+--
+
+=> STD 安定化を Deno 2 に向けた主目標の一つに設定
+
+---
+
+## 安定化プロセス
+
+- そもそも STD 全体を安定化することは難しいと判断
+- Deno STD を 38 のパッケージに分割 (元々のディレクトリ分割をそのまま利用)
+
+--
+  - 標準ライブラリが分割されるのはおかしいという意見がコミュニティから多く出てきた
+
+--
+  - Deno STD は全体を安定化できるほど成熟していないという理由づけでいなす
+
+---
+
+## 安定化プロセス
+
+パッケージ毎に Release Candidate (RC) Process を設定
+
+- テストとドキュメントについて基準をクリアしていること
+  - API が 100% ドキュメントされてること
+  - テストは十分に高いカバレッジがあること
+- メンテナー (@kt3k @iuioiua) レビューを通ること
+
+以上の基準をクリアすると 1.0.0 RC がリリースされる
+
+---
+
+## 安定化プロセス
+
+- 1.0.0 RC がリリースされてから1ヶ月間はコミュニティレビュー期間
+- この期間にコミュニティが変更のリクエストなどを出来る
+- RC 期間に出てきたリクエストが全てクリアされると安定化される
+
+
+---
+
+## 安定化プロセス
+
+- RC プロセスを 34 パッケージに対して今年5月から8月にかけて適用
+- 結果 30 パッケージが無事に安定化🎉
+
+--
+ - 4パッケージ (io, url, ini, dotenv) についてはプロセス途中で出てきた観点により不安定(unstable)バージョンにとどめる判断に
+
+---
+## 安定化したパッケージ
+
+<table align="center">
+<tr>
+<td>bytes&nbsp;&nbsp;&nbsp;</td>
+<td>collections&nbsp;&nbsp;&nbsp;</td>
+<td>media-types&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td>crypto&nbsp;&nbsp;&nbsp;</td>
+<td>encoding&nbsp;&nbsp;&nbsp;</td>
+<td>uuid&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td>assert&nbsp;&nbsp;&nbsp;</td>
+<td>data-structures&nbsp;&nbsp;&nbsp;</td>
+<td>html&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td>msgpack&nbsp;&nbsp;&nbsp;</td>
+<td>path&nbsp;&nbsp;&nbsp;</td>
+<td>regexp&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td>toml&nbsp;&nbsp;&nbsp;</td>
+<td>async&nbsp;&nbsp;&nbsp;</td>
+<td>cli&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td>text&nbsp;&nbsp;&nbsp;</td>
+<td>ulid&nbsp;&nbsp;&nbsp;</td>
+<td>expect&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td>front-matter&nbsp;&nbsp;&nbsp;</td>
+<td>fs&nbsp;&nbsp;&nbsp;</td>
+<td>json&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td>jsonc&nbsp;&nbsp;&nbsp;</td>
+<td>streams&nbsp;&nbsp;&nbsp;</td>
+<td>yaml&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td>fmt&nbsp;&nbsp;&nbsp;</td>
+<td>http&nbsp;&nbsp;&nbsp;</td>
+<td>net&nbsp;&nbsp;&nbsp;</td>
+</tr>
+<tr>
+<td>semver&nbsp;&nbsp;&nbsp;</td>
+<td>testing&nbsp;&nbsp;&nbsp;</td>
+<td>csv&nbsp;&nbsp;&nbsp;</td>
+</tr>
+</table>
+
+
+---
+## 安定化したパッケージ
+
+- 古くからある主要パッケージはほぼ全て安定化
+  - 例. assert, collections, fs, http, path, testing
+- 設定/データ言語系は ini 以外は安定化
+  - 例. csv, json, jsonc, msgpack, toml, yaml
+
+---
+## 不安定にとどまったパッケージ 8個
+
+- archive
+- log
+- webgpu
+- datetime
+- ini
+- io
+- url
+- dotenv
+
+---
+## archive
+
+- Tar アーカイブの生成・読み取り処理を提供するパッケージ
+- Deno の旧 I/O 形式に依存してしまっており、現在リニューアル中
+- リニューアルが間に合わなかったため安定化見送り
+
+---
+## log
+
+- Go 言語の log パッケージからインスパイアされて開発されたロギングライブラリ
+- JS/TS 用のパッケージとして非常に違和感があるデザインになっているため、メンテナーの判断によって安定化見送り
+
+---
+## webgpu
+
+- WebGPU 機能をサポートするライブラリ群を含んだパッケージ
+- Deno 本体の WebGPU がまだ不安定機能のため安定化見送り
+
+---
+## datetime
+
+- 各種日付処理を含んだパッケージ
+- 現在、言語に追加が予定されている Temporal で大部分カバーされる想定のため、安定化せず
+- 将来的には deprecate 予定
+
+---
+## ini
+
+- ini ファイルの生成と読み取り処理を提供するパッケージ
+- ini ファイルには仕様が無く、パーサーは大量にあるが、挙動がバラバラ
+- どのパーサーの挙動に寄せるのかという合意が得られなかったため、安定化見送り
+
+---
+## io
+
+- Deno の旧 I/O 形式 (Go 言語にインスパイアされた Reader/Writer インターフェースを使うもの) をサポートする各種 Utility を含んだパッケージ
+- 旧 I/O 形式は遠い将来には撤廃する意図があるため、安定化するのはおかしいのではないかという疑問が提示され、安定化しない事が決定
+
+---
+## url
+
+- URL に対して path 操作が出来るユーティリティ (dirname など) を提供するパッケージ
+- 既存の path パッケージの API をオーバーロードすれば十分なのではという意見によって、削除することが決定した。
+
+---
+## dotenv
+
+- `.env` ファイルの環境変数への読み込み機能を提供するパッケージ
+- 最近 Deno 本体が `--env` という同様の機能を提供し始め、そちらと機能がオーバーラップしている状態
+- 上の機能と、STD の dotenv のどちらを推奨するのかの判断が出来なかった (現在も未決) ため安定化を見送り
+
+---
+## 安定化後の STD
+
+```
+import { assertEquals } from "jsr:@std/assert@1";
+```
+
+- バージョン1のパッケージのトップレベルから export されているものは安定 API
+- この API は semver に従う。バージョン1の間は破壊的変更は起こらない。
+
+---
+## 安定化後の STD
+
+```
+import { assertNever }
+    from "jsr:@std/assert@1/unstable-never";
+```
+
+- 安定化したパッケージの中に不安定 API がある場合がある
+  - 安定化プロセス以降に追加された API は一旦不安定 API になるため
+- 安定パッケージの中の不安定 API は必ず `unstable-` がついたパスからエクスポートされている
+
+---
+class: middle center
+
+## ご清聴ありがとうございました
+</textarea>
+    <div style="z-index: -1; position: fixed; display: flex; align-items: center; gap: 4px;">
+      <svg style="animation: spin 1s linear infinite; width: 18px; height: 18px;" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-refresh" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+        <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
+        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" />
+      </svg>
+      <span>loading...</span>
+    </div>
+    <script src="remark.js"></script>
+    
+    <script>
+      window.slideshow = remark.create({"slideNumberFormat":"Deno STD 安定化の話 - %current% / %total%"})
+    </script>
+    
+    <script>
+      
+      ;window.LiveReloadOptions = {
+        host: 'localhost',
+        port: '35729'
+      };
+    </script>
+  </body>
+</html>

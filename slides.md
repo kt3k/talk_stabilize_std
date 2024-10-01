@@ -251,4 +251,6 @@ import { assertNever }
 ---
 class: middle center
 
-## ご清聴ありがとうございました
+安定化した STD を今までより安心して使ってください
+
+ご清聴ありがとうございました

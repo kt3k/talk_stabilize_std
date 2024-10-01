@@ -100,7 +100,7 @@ Yoshiya Hinosawa @kt3k
 ---
 ## 安定化したパッケージ
 
-<table align="center">
+<table align="center" style="font-family: courier; font-size: 27px;">
 <tr>
 <td>bytes&nbsp;&nbsp;&nbsp;</td>
 <td>collections&nbsp;&nbsp;&nbsp;</td>
